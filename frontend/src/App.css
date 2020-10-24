@@ -1,0 +1,99 @@
+.app {
+  background: rgb(238, 238, 238);
+  height: 100vh;
+  padding-top: 5vh;
+}
+body {
+  font-family: "Ubuntu";
+}
+
+.card {
+  height: 90vh;
+}
+
+.title {
+  text-decoration: underline;
+  text-align: center;
+  font-weight: 600;
+  margin-top: 35px;
+  font-size: 2.3em;
+  margin-bottom: 55px;
+  color: #005eb8;
+}
+.texte {
+  font-weight: bolder;
+  margin-left: 50px;
+  font-size: 1.9em;
+}
+.paragraphe {
+  font-weight: normal;
+  color: #93c90e;
+}
+.blocText {
+  margin-top: 10vh;
+}
+.general {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.blocRight {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bloc2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.bloc3 {
+  display: flex;
+  flex-direction: column;
+}
+
+.CircularProgressbar {
+  width: 80% !important;
+}
+
+.compteur {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  text-align: center;
+}
+.consoTexte {
+  text-align: center;
+  margin-top: 5px;
+  font-size: 1.7em;
+}
+.paragrapheBloc2 {
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  text-align: center;
+  font-size: 2.2em;
+  font-weight: bold;
+}
+
+.CircularProgressbar-text {
+  font-size: 0.8em !important;
+  font-weight: 600;
+  fill: #005eb8 !important;
+}
+.CircularProgressbar-path {
+  stroke: #005eb8 !important;
+}
+.bg-success {
+  background-color: #93c90e !important;
+}
+.conso {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 20px;
+}
+.nombre {
+  font-size: 1.4em;
+  margin-top: 100px;
+  color: #005eb8;
+}
