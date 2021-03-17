@@ -1,3 +1,11 @@
+######################
+
+frontend/
+backend/
+docker-compose.yml
+
+######################
+
 # Logs
 logs
 *.log
