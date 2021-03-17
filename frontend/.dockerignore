@@ -1,5 +1,4 @@
 Dockerfile
 Dockerfile.dev 
 docker-compose.yml
-.git
-node_modules
+node-modules

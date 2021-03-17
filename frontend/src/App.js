@@ -1,46 +1,61 @@
 import React from 'react';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { create } from 'jss';
+import rtl from 'jss-rtl';
+import MomentUtils from '@date-io/moment';
+import { SnackbarProvider } from 'notistack';
+import {
+  jssPreset,
+  StylesProvider,
+  ThemeProvider
+} from '@material-ui/core';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import GlobalStyles from 'src/components/GlobalStyles';
+import ScrollReset from 'src/components/ScrollReset';
+import CookiesNotification from 'src/components/CookiesNotification';
+import GoogleAnalytics from 'src/components/GoogleAnalytics';
+import SettingsNotification from 'src/components/SettingsNotification';
+import { AuthProvider } from 'src/contexts/JWTAuthContext';
+import useSettings from 'src/hooks/useSettings';
+import { createTheme } from 'src/theme';
+import routes, { renderRoutes } from 'src/routes';
 
-import './App.css';
-import socketIOClient from "socket.io-client";
-import { Card } from "react-bootstrap";
+const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
+const history = createBrowserHistory();
 
+const App = () => {
+  const { settings } = useSettings();
 
-class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      data: '',
-    }
-  }
+  const theme = createTheme({
+    direction: settings.direction,
+    responsiveFontSizes: settings.responsiveFontSizes,
+    theme: settings.theme
+  });
 
-
-
-  componentDidMount = () => {
-    const socket = socketIOClient("https://rcp.linkable.tech",
-      {
-        query: {
-          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNjE2MjM5MDIyfQ.vFHBtvqMVml7DdivV5Yr1L2xFup-O1BoVM8Wv3dFMjs'
-        },
-        "transports": ["websocket"]
-      });
-    socket.on("data", data => {
-      this.setState({ data: data })
-    });
-
-  }
-
-  render = () => {
-
-    return (
-      <>
-        <div className="app">
-
-        </div>
-      </>
-    )
-  }
-}
-
-
+  return (
+    <ThemeProvider theme={theme}>
+      <StylesProvider jss={jss}>
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <SnackbarProvider
+            dense
+            maxSnack={3}
+          >
+            <Router history={history}>
+              <AuthProvider>
+                <GlobalStyles />
+                <ScrollReset />
+                <GoogleAnalytics />
+                <CookiesNotification />
+                <SettingsNotification />
+                {renderRoutes(routes)}
+              </AuthProvider>
+            </Router>
+          </SnackbarProvider>
+        </MuiPickersUtilsProvider>
+      </StylesProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;

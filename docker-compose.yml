@@ -41,18 +41,23 @@ services:
       - default
       - web
     volumes:
-      # - ./backend/public/:/usr/src/app/public
+      - ./backend/temp/:/temp/
       - ./backend/route/:/usr/src/app/route
       - ./backend/index.js:/usr/src/app/index.js
     depends_on:
       - db
     environment:
+      # DEBUG: socket.io*
       DB_HOST: db
       DB_USER: ${DB_USERNAME}
       DB_PASS: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      PUBLIC_VAPID_KEY: BIZeNc9nnXDI_hw--el-oOna4tc2SDAFCMXDmDM4229ZTwrmg9KMgATfF4lcMNnr-yM855TLSxc8cbTyyAqIDBY
+      PRIVATE_VAPID_KEY: 9lb6HYYPfsMNZpdWz0yDfS-f0V6zbMmB_WlyuWCVQkk
+      WEB_PUSH_CONTACT: url:rcp.linkable.tech
+      JWT_KEY: bkNf0YIluD8lOM3Z78Go12AbIczq32Px
     labels:
-      - "traefik.http.routers.rcp_backend.rule=Host(`rcp.linkable.tech`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.rcp_backend.rule=Host(`rcp.linkable.tech`) && (PathPrefix(`/api`) || PathPrefix(`/socket.io`))"
       - "traefik.http.routers.rcp_backend.entrypoints=websecure"
       - "traefik.http.routers.rcp_backend.tls=true"
       - "traefik.http.routers.rcp_backend.tls.certresolver=leresolver"
@@ -68,8 +73,11 @@ services:
       - web
     environment:
       PORT: 80
+      PUBLIC_URL: https://rcp.linkable.tech
+      REACT_APP_API_URL: https://rcp.linkable.tech
+      REACT_APP_PUBLIC_VAPID_KEY: BIZeNc9nnXDI_hw--el-oOna4tc2SDAFCMXDmDM4229ZTwrmg9KMgATfF4lcMNnr-yM855TLSxc8cbTyyAqIDBY
     volumes:
-      # - ./frontend/src/public/:/usr/src/app/src/public
+      - ./frontend/public/:/usr/src/app/public
       - ./frontend/src/:/usr/src/app/src/
     labels:
       - "traefik.http.routers.rcp_frontend.rule=Host(`rcp.linkable.tech`)"
@@ -77,6 +85,49 @@ services:
       - "traefik.http.routers.rcp_frontend.tls=true"
       - "traefik.http.routers.rcp_frontend.tls.certresolver=leresolver"
       - "traefik.http.services.rcp_frontend.loadbalancer.server.port=80"
+      - "traefik.docker.network=web"
+
+  # media-server:
+  #   build:
+  #     context: ./media-server
+  #   volumes:
+  #     - ./media-server/index.js:/usr/src/app/index.js
+  #     - ./media-server/create-playlist.js:/usr/src/app/create-playlist.js
+  #     - ./media/:/usr/src/app/media/
+  #   networks:
+  #     - web
+  #   ports:
+  #     - 8001:80
+  #     - 1936:1935
+  #   environment:
+  #     PUBLISH_START_NOTIFY_URL: ""
+  #     PUBLISH_STOP_NOTIFY_URL: ""
+  #   labels:
+  #     - "traefik.http.routers.rcp_media_server.rule=Host(`rcp.linkable.tech`) && PathPrefix(`/live`)"
+  #     - "traefik.http.routers.rcp_media_server.entrypoints=websecure"
+  #     - "traefik.http.routers.rcp_media_server.tls=true"
+  #     - "traefik.http.routers.rcp_media_server.tls.certresolver=leresolver"
+  #     - "traefik.http.services.rcp_media_server.loadbalancer.server.port=80"
+  #     - "traefik.docker.network=web"
+
+  media-server:
+    build:
+      context: ./rtmp-hls-server
+    volumes:
+      # - ./media-server/index.js:/usr/src/app/index.js
+      # - ./media-server/create-playlist.js:/usr/src/app/create-playlist.js
+      - ./media-nginx/:/mnt/
+    networks:
+      - web
+    ports:
+      - 8080:8080
+      - 1937:1935
+    labels:
+      - "traefik.http.routers.rcp_media_server.rule=Host(`rcp.linkable.tech`) && PathPrefix(`/hls`)"
+      - "traefik.http.routers.rcp_media_server.entrypoints=websecure"
+      - "traefik.http.routers.rcp_media_server.tls=true"
+      - "traefik.http.routers.rcp_media_server.tls.certresolver=leresolver"
+      - "traefik.http.services.rcp_media_server.loadbalancer.server.port=8080"
       - "traefik.docker.network=web"
 
 networks:

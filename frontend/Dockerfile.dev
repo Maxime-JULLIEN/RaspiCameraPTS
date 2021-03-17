@@ -6,8 +6,8 @@ COPY . /usr/src/app
 
 RUN npm i
 
-ENV SASS_PATH=./node_modules
-RUN npm install node-sass
+# ENV SASS_PATH=./node_modules
+# RUN npm install node-sass
 
 EXPOSE 3000
 CMD [ "npm", "start" ]
